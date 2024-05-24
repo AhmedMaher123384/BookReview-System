@@ -10,8 +10,7 @@ public interface BookService {
      BookDto getBookById(Long id);
      BookDto UpdateBook(UpdateBookDto updateBookDto,Long id);
      void deleteById(Long id);
-    BookResponse getAllBook(int pageNo, int pageSize);
-
-    List<BookDto> getAllBooksFromDB();
+     BookResponse getAllBook(int pageNo, int pageSize);
+     List<BookDto> getAllBooksFromDB();
 
 }
