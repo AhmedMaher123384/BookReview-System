@@ -3,7 +3,6 @@ package com.BookReview.System.Security;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import java.security.Key;
 
 public class SecurityConstants {
 

@@ -100,4 +100,28 @@ public class AuthServiceImpl implements AuthService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Override
+    public ResponseEntity<String> changePassword(ChangePasswordRequest request, Authentication authentication) {
+
+        UserDetails userDetails =(UserDetails) authentication.getPrincipal();
+
+        UserEntity user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
+            return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
+        }
+
+        if(!request.getNewPassword().equals(request.getConfirmationPassword())){
+            return new ResponseEntity<>("Passwords do not match", HttpStatus.BAD_REQUEST);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
+
+
+    }
 }
