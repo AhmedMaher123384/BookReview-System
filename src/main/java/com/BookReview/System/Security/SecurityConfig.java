@@ -1,5 +1,6 @@
 package com.BookReview.System.Security;
 
+import com.BookReview.System.Service.Impl.LogoutServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,10 +24,8 @@ public class SecurityConfig {
 
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    private LogoutServiceImpl logoutService;
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -34,12 +34,30 @@ public class SecurityConfig {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public JwtFilter jwtFilter() {
         return new JwtFilter();
     }
 
+    private static final String[] WHITE_LIST_URL = {"/auth/**",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
+            "/swagger-ui.html"};
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
@@ -48,13 +66,21 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(WHITE_LIST_URL).permitAll()
                         .requestMatchers("/book/**", "/review/**").authenticated()
+                )
+                .logout(l -> l
+                        .logoutUrl("/rauth/logout")
+                        .addLogoutHandler(new JwtLogoutFilter(logoutService))
+                        .logoutSuccessHandler((request, response, authentication)
+                                -> SecurityContextHolder.clearContext())
                 )
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults());
+
         http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }

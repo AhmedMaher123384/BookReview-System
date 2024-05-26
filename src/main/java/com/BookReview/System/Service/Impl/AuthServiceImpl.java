@@ -1,6 +1,7 @@
 package com.BookReview.System.Service.Impl;
 
-import com.BookReview.System.Model.Dto.*;
+import com.BookReview.System.Exception.*;
+import com.BookReview.System.Model.Dto.Security.*;
 import com.BookReview.System.Model.Entity.Role;
 import com.BookReview.System.Model.Entity.UserEntity;
 import com.BookReview.System.Repository.RoleRepository;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,15 +40,16 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private CustomeUserDetailsService userDetailsService;
 
+
     @Override
     public ResponseEntity<String> register(RegisterDto registerDto) {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
+            throw new UsernameAlreadyExistsException("Username already exists");
         }
 
         Role role = roleRepository.findByName("USER").orElse(null);
         if (role == null) {
-            return new ResponseEntity<>("Role 'USER' not found", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RoleNotFoundException("Role 'USER' not found");
         }
 
         String password = passwordEncoder.encode(registerDto.getPassword());
@@ -70,34 +73,32 @@ public class AuthServiceImpl implements AuthService {
             UserDetails user = userDetailsService.loadUserByUsername(loginDto.getUsername());
             String accessToken = jwtUtil.generateToken(user);
             String refreshToken = jwtUtil.generateRefreshToken(user);
-            TokenResponse response= new TokenResponse(accessToken);
+            TokenResponse response = new TokenResponse(accessToken);
             response.setRefreshToken(refreshToken);
             return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (AuthenticationException e) {
+            throw new LoginException("Invalid username or password");
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new LoginException("An error occurred during login");
         }
-
     }
+
 
 
 
     @Override
     public ResponseEntity<AccessTokenResponse> refreshToken(RefreshTokenRequest request) {
-        try {
-            String refreshToken = request.getRefreshToken();
-            String username = jwtUtil.extractUserName(refreshToken, SecurityConstants.REFRESH_SECRET_KEY);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String refreshToken = request.getRefreshToken();
+        String username = jwtUtil.extractUserName(refreshToken, SecurityConstants.REFRESH_SECRET_KEY);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (jwtUtil.isRefreshTokenValidate(refreshToken, userDetails)) {
-                String newAccessToken = jwtUtil.generateToken(userDetails);
-                AccessTokenResponse tokenResponse = new AccessTokenResponse(newAccessToken);
+        if (jwtUtil.isRefreshTokenValidate(refreshToken, userDetails)) {
+            String newAccessToken = jwtUtil.generateToken(userDetails);
+            AccessTokenResponse tokenResponse = new AccessTokenResponse(newAccessToken);
 
-                return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+        } else {
+            throw new TokenValidationException("Invalid refresh token");
         }
     }
 
@@ -107,14 +108,14 @@ public class AuthServiceImpl implements AuthService {
         UserDetails userDetails =(UserDetails) authentication.getPrincipal();
 
         UserEntity user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() -> new PasswordMismatchException("User not found"));
 
         if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
-            return new ResponseEntity<>("Wrong password", HttpStatus.BAD_REQUEST);
+            throw new PasswordMismatchException("Wrong password");
         }
 
         if(!request.getNewPassword().equals(request.getConfirmationPassword())){
-            return new ResponseEntity<>("Passwords do not match", HttpStatus.BAD_REQUEST);
+            throw new PasswordMismatchException("Passwords do not match");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -124,4 +125,6 @@ public class AuthServiceImpl implements AuthService {
 
 
     }
-}
+
+    }
+

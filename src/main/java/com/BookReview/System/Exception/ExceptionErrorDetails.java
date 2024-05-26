@@ -7,8 +7,10 @@ import java.util.Date;
 
 @Data
 public class ExceptionErrorDetails {
+
     private String uri;
     private String Message;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date TimeStamp;
 

@@ -3,7 +3,6 @@ package com.BookReview.System.Service.Impl;
 import com.BookReview.System.Exception.BookNotFoundException;
 import com.BookReview.System.Exception.ReviewNotFoundException;
 import com.BookReview.System.Model.Dto.AddReviewDto;
-import com.BookReview.System.Model.Dto.BookDto;
 import com.BookReview.System.Model.Dto.ReviewDto;
 import com.BookReview.System.Model.Entity.Book;
 import com.BookReview.System.Model.Entity.Review;
@@ -82,11 +81,16 @@ public class ReviewServiceImpl implements ReviewService {
 
 
 
-    public ReviewDto mapToDto(Review review){
-        return ReviewDto.builder().id(review.getId()).title(review.getTitle()).content(review.getContent()).stars(review.getStars()).build();
-    }
-    public Review mapToEntity(ReviewDto reviewDto){
-        return Review.builder().id(reviewDto.getId()).title(reviewDto.getTitle()).content(reviewDto.getContent()).stars(reviewDto.getStars()).build();
+    private ReviewDto mapToDto(Review review) {
+        return ReviewDto.builder()
+                .id(review.getId())
+                .title(review.getTitle())
+                .content(review.getContent())
+                .stars(review.getStars())
+                .createdBy(review.getCreatedBy())
+                .createdDate(review.getCreatedDate())
+                .lastModifiedDate(review.getLastModifiedDate())
+                .build();
     }
     public Review mapToEntity(AddReviewDto addReviewDto){
         return Review.builder().title(addReviewDto.getTitle()).content(addReviewDto.getContent()).stars(addReviewDto.getStars()).build();

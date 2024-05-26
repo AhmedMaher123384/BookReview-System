@@ -21,6 +21,8 @@ public class GlobalExceptionHandler {
                 new ExceptionErrorDetails(request.getDescription(false), ex.getMessage());
         return new ResponseEntity<>(exceptionErrorDetails,ex.getHttpStatus());
     }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorDetails> handleValidationException(MethodArgumentNotValidException ex,WebRequest request){
         ValidationErrorDetails validationErrors = new ValidationErrorDetails(request.getDescription(false));
@@ -31,4 +33,5 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
 
     }
+
 }

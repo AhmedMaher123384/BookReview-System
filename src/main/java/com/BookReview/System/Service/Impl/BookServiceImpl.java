@@ -83,9 +83,7 @@ public class BookServiceImpl implements BookService {
     BookDto mapToDto(Book book){
         return BookDto.builder().id(book.getId()).name(book.getName()).type(book.getType()).build();
     }
-    Book mapToEntity(BookDto bookDto){
-        return Book.builder().id(bookDto.getId()).name(bookDto.getName()).type(bookDto.getType()).build();
-    }
+
     Book mapAddDtoToEntity(AddBookDto addBookDto){
         return Book.builder().name(addBookDto.getName()).type(addBookDto.getType()).build();
     }

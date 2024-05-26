@@ -18,13 +18,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
