@@ -28,7 +28,7 @@ This application offers a platform for users to evaluate books through reviews a
 
 ## Setup
 1. Clone the repository.
-2. Configure your database credentials in `enviroment in docker-compose`.
+2. Configure your database credentials in `enviroment in docker-compose.yml`.
 3. Set up Maven:
    ```bash
    mvn clean install
