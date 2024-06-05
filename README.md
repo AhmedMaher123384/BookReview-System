@@ -28,9 +28,13 @@ This application offers a platform for users to evaluate books through reviews a
 
 ## Setup
 1. Clone the repository.
-2. Set up the PostgreSQL database.
-3. Configure your database credentials in `application.properties`.
-4. Run the application using Spring Boot.
+2. Configure your database credentials in `enviroment in docker-compose`.
+3. Set up Maven:
+   ```bash
+   mvn clean install
+4. Set up Docker and run Docker Compose:
+   ```bash
+   docker-compose up -d 
 
 ## Usage
 Use the provided endpoints to manage books and reviews through a RESTful API.
