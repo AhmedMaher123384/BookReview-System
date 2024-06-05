@@ -1,4 +1,4 @@
-# Book Review Application
+# Book Review System 
 
 ## Overview
 This application offers a platform for users to evaluate books through reviews and ratings before making a purchase.
