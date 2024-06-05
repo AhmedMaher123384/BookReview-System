@@ -1,12 +1,14 @@
 # Book Review Application
 
 ## Overview
-This application offers a platform for users to evaluate books through reviews and ratings before making a purchase. It helps users make informed decisions by providing insights from other readers.
+This application offers a platform for users to evaluate books through reviews and ratings before making a purchase.
+It helps users make informed decisions by providing insights from other readers.
 
 ## Technologies Used
 - **Spring Boot**: Framework for creating stand-alone, production-grade Spring-based applications.
 - **JUnit**: Framework for unit testing Java applications.
-- **Spring Security**: Provides authentication and authorization support.
+- **Spring Security**: For securing the application.
+- **JWT (JSON Web Tokens)**: For handling authentication tokens.
 - **PostgreSQL**: Used as the relational database management system.
 
 ## Features
