@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         email = "Ahmedmaher123384@gmail.com"
                 ),
                 description = "OpenApi documentation for  Book_Review",
-                title = "OpenApi specification - Alibou",
+                title = "OpenApi specification - maher",
                 version = "2.0",
                 license = @License(
                         name = "Licence name",
