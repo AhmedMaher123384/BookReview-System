@@ -10,9 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -31,13 +31,15 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto getBookById(Long id) {
-        Book book = this.bookRepository.findById(id).orElseThrow(()->new BookNotFoundException("Pokemon could not be delete"));
+        Book book = this.bookRepository.findById(id).orElseThrow(()->
+                                                                 new BookNotFoundException("Pokemon could not be delete"));
         return mapToDto(book);
     }
 
     @Override
     public BookDto UpdateBook(UpdateBookDto updateBookDto, Long id) {
-        Book book = this.bookRepository.findById(id).orElseThrow(()->new BookNotFoundException("Pokemon could not be delete"));
+        Book book = this.bookRepository.findById(id).orElseThrow(()->
+                                                                 new BookNotFoundException("Pokemon could not be delete"));
         book.setName(updateBookDto.getName());
         book.setType(updateBookDto.getType());
         Book updated = this.bookRepository.save(book);
@@ -47,7 +49,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteById(Long id) {
-        Book book=this.bookRepository.findById(id).orElseThrow(()->new BookNotFoundException("Pokemon could not be delete"));
+        Book book=this.bookRepository.findById(id).orElseThrow(()->
+                                                               new BookNotFoundException("Pokemon could not be delete"));
         this.bookRepository.delete(book);
 
     }
@@ -99,7 +102,5 @@ public class BookServiceImpl implements BookService {
         }).collect(Collectors.toList());
     return dtos;
     }
-
-
 
 }
