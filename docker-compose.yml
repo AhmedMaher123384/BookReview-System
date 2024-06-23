@@ -13,12 +13,12 @@ services:
         "spring.jpa.hibernate.ddl-auto" : "update"
       }'
     depends_on:
-      postgresdb:
+      postgresdb-book:
         condition: service_healthy
     networks:
       - BookSystem-network
 
-  postgresdb:
+  postgresdb-book:
     image: postgres:latest
     container_name: postgresdb
     environment:
@@ -41,7 +41,7 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin
     depends_on:
-      - postgresdb
+      - postgresdb-book
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
